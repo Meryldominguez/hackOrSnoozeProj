@@ -166,11 +166,9 @@ class User {
   static async editStory(storyId, storyObj){
     const username = localStorage.username;
     const token = localStorage.token
-    const submission = await axios.patch(`${BASE_URL}/stories/${storyId}`,{token: token})
-    console.log(submission.data.message)
+    const submission = await axios.patch(`${BASE_URL}/stories/${storyId}`,{"token": token, "story": {"author":storyObj.author, "title": storyObj.title, "url": storyObj.url}})
+  
   }
-
-
   static async addFavorite(storyId){
     const username = localStorage.username;
     const token = localStorage.token
