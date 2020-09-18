@@ -97,9 +97,9 @@ console.log(storyList)
 
   $("body").on("click", "#nav-all", async function() {
     if(await checkIfLoggedIn())
-    {hideElements();
+    {$profileDiv.attr("class","hidden");
+    hideElements();
     $allStoriesList.empty()
-    $profileDiv.attr("class","hidden")
     await generateStories(0);
     $allStoriesList.show();}
   });
@@ -186,11 +186,12 @@ $navProfile.on("click",()=>{
       $ownStories.empty()
       await generateUserSubmitted()
       await showCurrentUser()
+      return true
 
     }else{
       $allStoriesList.empty()
       $allStoriesList.append($("<h3> Sign in or Login for articles and news!</h3>"))
-
+      return false
     }
   }
   
@@ -218,6 +219,7 @@ $navProfile.on("click",()=>{
     $allStoriesList.empty()
     $allStoriesList.attr("style","")
 
+    await showCurrentUser()
     await generateStories(0);
 
     // update the navigation bar
@@ -367,6 +369,33 @@ $navProfile.on("click",()=>{
     }
   }
 //edit stories
+//edit stories
+
+$ownStories.on("click",".favorite",(e)=>{
+  var storyId = (e.target.parentElement.id)
+  $editForm.attr("class", "")
+  $("#edit-title").val(e.target.nextSibling.nextSibling.innerText)
+  $("#edit-author").val(e.target.nextSibling.nextSibling.nextSibling.nextSibling.innerText.slice(3))
+  $("#edit-url").val(e.target.nextSibling.nextSibling.href)
+$("#story-edit-button").on("click", async (e)=>{
+    e.preventDefault()
+    const newStoryObj = new Story({title: $("#edit-title").val(),author:$("#edit-author").val(),url:$("#edit-url").val(),storyId:storyId})
+    
+    await User.editStory(storyId,newStoryObj)
+    $ownStories.empty()
+    await generateUserSubmitted()
+    $editForm.addClass("hidden")
+    })
+$("#story-delete-button").on("click", async(e)=>{
+    e.preventDefault()
+    await User.deleteStory(storyId)
+    $ownStories.empty()
+    await generateUserSubmitted()
+    $editForm.addClass("hidden")
+    
+  })
+  
+})
   /* simple function to pull the hostname from a URL */
 
   function getHostName(url) {

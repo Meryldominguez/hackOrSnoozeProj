@@ -173,7 +173,7 @@ class User {
   static async deleteStory(storyId){
     const username = localStorage.username;
     const token = localStorage.token
-    const submission = await axios.delete(`${BASE_URL}/users/${username}/favorites/${storyId}`,{params:{
+    const submission = await axios.delete(`${BASE_URL}/stories/${storyId}`,{params:{
       token: token}})
   }
 
