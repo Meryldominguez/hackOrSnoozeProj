@@ -186,11 +186,11 @@ $navProfile.on("click",()=>{
       $ownStories.empty()
       await generateUserSubmitted()
       await showCurrentUser()
-      return true
+
     }else{
       $allStoriesList.empty()
       $allStoriesList.append($("<h3> Sign in or Login for articles and news!</h3>"))
-      return false
+
     }
   }
   
@@ -316,6 +316,11 @@ $navProfile.on("click",()=>{
 
 
  async function generateUserFavorites(){
+    const token = localStorage.getItem("token");
+    const username = localStorage.getItem("username");
+
+    currentUser = await User.getLoggedInUser(token, username)
+
    $favList.empty()
     if (currentUser.favorites.length !== 0){
      currentUser.favorites.map((story) => {
@@ -338,14 +343,18 @@ $navProfile.on("click",()=>{
   //remove favorites
   $favDiv.on("click",".favorite",async(e)=>{
     await User.removeFavorite(e.target.parentElement.id)
-
     await generateUserFavorites()
 
   })
 
 //populate the profile section
   async function generateUserSubmitted(){
+    const token = localStorage.getItem("token");
+    const username = localStorage.getItem("username");
 
+    currentUser = await User.getLoggedInUser(token, username)
+
+  $ownStories.empty()
     if (currentUser.ownStories.length === 0){
       $("<h5>")
         .text("You have no stories that you've submitted")
