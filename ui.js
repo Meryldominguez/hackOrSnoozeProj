@@ -399,29 +399,25 @@ $("#story-delete-button").on("click", async(e)=>{
 
 $profileEditBtn.on("click",async()=>{
   $("#profile-info").toggleClass("hidden");
-
+  $("#profile-edit-form").toggleClass("hidden")
+  $ownStories.toggleClass("hidden")
 let name = $("#profile-name").text().slice(6)
 console.log(name)
 let username = $("#profile-username").text().slice(10)
 console.log(username)
-$("#profile-edit-form").attr("class", "")
   $("#edit-name").val(name)
   $("#edit-username").val(username)
+})
 
-
-
-  $("profile-edit-submit").on("submit", async(e)=>{
+$("#profile-edit-button").on("click", async(e)=>{
     e.preventDefault()
-    let userObj = new User({name:("#edit-name").val(),
+    let userObj = new User({name:$("#edit-name").val(),
     username:$("#edit-username").val()})
     await User.changeUserInfo(userObj)
     $("#profile-edit-form").attr("class", "hidden")
     $("#profile-info").attr("class", "")
     
   })
-
-})
-
   /* simple function to pull the hostname from a URL */
 
   function getHostName(url) {
