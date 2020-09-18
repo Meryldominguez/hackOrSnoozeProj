@@ -351,41 +351,13 @@ $navProfile.on("click",()=>{
         .text("You have no stories that you've submitted")
         .appendTo($ownStories)
     }else{
-      currentUser.ownStories.map(story => {generateStoryHTML(story,$ownStories,"&#9998") 
-      
+      currentUser.ownStories.map(story => {
+        generateStoryHTML(story,$ownStories,"&#9998")
       })
 
     }
   }
 //edit stories
-
-$ownStories.on("click",".favorite",(e)=>{
-        var storyId = (e.target.parentElement.id)
-        console.log(storyId)
-        $editForm.attr("class", "")
-        $("#edit-title").val(e.target.nextSibling.nextSibling.innerText)
-        $("#edit-author").val(e.target.nextSibling.nextSibling.nextSibling.nextSibling.innerText.slice(3))
-        $("#edit-url").val(e.target.nextSibling.nextSibling.href)
-$("#story-edit-button").on("click", async (e)=>{
-          e.preventDefault()
-          const newStoryObj = new Story({title: $("#edit-title").val(),author:$("#edit-author").val(),url:$("#edit-url").val(),storyId:storyId})
-
-          await User.editStory(storyId,newStoryObj)
-          $ownStories.empty()
-          await generateUserSubmitted()
-          $editForm.addClass("hidden")
-          })
-$("#story-delete-button").on("click", async(e)=>{
-          e.preventDefault()
-          await User.deleteStory(storyId)
-          $ownStories.empty()
-          await generateUserSubmitted()
-          $editForm.addClass("hidden")
-          
-        })
-        
-  })
-
   /* simple function to pull the hostname from a URL */
 
   function getHostName(url) {
