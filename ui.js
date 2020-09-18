@@ -6,6 +6,7 @@ $(async function() {
   const $loginForm = $("#login-form");
   const $createAccountForm = $("#create-account-form");
   const $ownStories = $("#my-articles");
+  const $editForm = $("#edit-article-form")
   const $navLogin = $("#nav-login");
   const $navLogOut = $("#nav-logout");
   const $newArticle = $("#nav-new-article")
@@ -25,7 +26,8 @@ $(async function() {
   //global username and token variables
 
   await checkIfLoggedIn();
-
+console.log(currentUser)
+console.log(storyList)
   /**
    * Event listener for logging in.
    *  If successfully we will setup the user instance
@@ -85,7 +87,7 @@ $(async function() {
     // Show the Login and Create Account Forms
     $loginForm.slideToggle();
     $createAccountForm.slideToggle();
-    $allStoriesList.toggle();
+    $allStoriesList.toggle()
   });
 
 
@@ -94,10 +96,12 @@ $(async function() {
    */
 
   $("body").on("click", "#nav-all", async function() {
-    hideElements();
+    if(await checkIfLoggedIn())
+    {hideElements();
     $allStoriesList.empty()
+    $profileDiv.attr("class","hidden")
     await generateStories(0);
-    $allStoriesList.show();
+    $allStoriesList.show();}
   });
 
  //show/hide newArticle form
@@ -106,25 +110,48 @@ $(async function() {
   $favDiv.addClass("hidden")
   $allStoriesList.attr("class","articles-list")
   $profileDiv.attr("class","hidden")
+  
 
 })
+//submit new article
+  $submitForm.on("submit", async function(evt) {
+    evt.preventDefault(); 
+
+    // no page-refresh on submit
+    const newStoryObj = {
+      author: $("#author").val(),
+      title:$("#title").val(),
+      url: $("#url").val()
+    }
+
+    $("#submit-form input").val("")
+    $submitForm.toggleClass("hidden")
+
+
+    const newStory = new Story(newStoryObj)
+
+    await storyList.addStory(currentUser,newStory)
+    $allStoriesList.empty()
+    
+    await generateUserSubmitted()
+
+    await generateStories(0)
+
+  });
 //show/hide user favorites
-$navFav.on("click",()=>{
+$navFav.on("click",async()=>{
   $favDiv.toggleClass("hidden")
   $allStoriesList.removeClass("hidden")
   $submitForm.addClass("hidden")
   $profileDiv.attr("class","hidden")
+  
 
 })
 //show.hide profile and user submitted articles
-$navProfile.on("click",async ()=>{
-
+$navProfile.on("click",()=>{
   $favDiv.addClass("hidden")
   $profileDiv.toggleClass("hidden container")
-  $ownStories.empty();
   $submitForm.addClass("hidden")
-  await showCurrentUser()
-  await generateUserSubmitted()
 })
 
 
@@ -154,29 +181,31 @@ $navProfile.on("click",async ()=>{
       showNavForLoggedInUser();
       $allStoriesList.empty()
       await generateStories(0);
+      $favList.empty()
       await generateUserFavorites()
+      $ownStories.empty()
+      await generateUserSubmitted()
+      await showCurrentUser()
+      return true
+    }else{
+      $allStoriesList.empty()
+      $allStoriesList.append($("<h3> Sign in or Login for articles and news!</h3>"))
+      return false
     }
   }
   
   async function showCurrentUser(){
-    $profileDiv.toggleClass("hidden container")
-    const token = localStorage.getItem("token");
-    const username = localStorage.getItem("username");
-
-
-    currentUser = await User.getLoggedInUser(token, username)
-
+    
     $("#profile-name").text(`Name: ${currentUser.name}`)
     $("#profile-username").text(`Username: ${currentUser.username}`)
     $("#profile-account-date").text(`Account Created: ${currentUser.createdAt}`)
-    $profileDiv.toggleClass("hidden container")
   }
 
   /**
    * A rendering function to run to reset the forms and hide the login info
    */
 
-  function loginAndSubmitForm() {
+  async function loginAndSubmitForm() {
     // hide the forms for logging in and signing up
     $loginForm.hide();
     $createAccountForm.hide();
@@ -186,7 +215,10 @@ $navProfile.on("click",async ()=>{
     $createAccountForm.trigger("reset");
 
     // show the stories
-    $allStoriesList.show();
+    $allStoriesList.empty()
+    $allStoriesList.attr("style","")
+
+    await generateStories(0);
 
     // update the navigation bar
     showNavForLoggedInUser();
@@ -224,7 +256,6 @@ $navProfile.on("click",async ()=>{
       populateScroll()
     };
     
-    
   })
 
 
@@ -257,22 +288,6 @@ $navProfile.on("click",async ()=>{
   }
 
 
-  //add favorites to user favorite list
-  $allStoriesList.on("click",".favorite",async(e)=>{
-    await User.addFavorite(e.target.parentElement.id);
-    console.log(e.target.parentElement.id)
-    $favList.empty()
-    await generateUserFavorites()
-
-  })
-  //remove favorites
-  $favDiv.on("click",".favorite",async(e)=>{
-    await User.removeFavorite(e.target.parentElement.id)
-    $("#favorited-articles").empty()
-    
-    await generateUserFavorites()
-
-  })
 
   /* hide all elements in elementsArr */
 
@@ -281,7 +296,6 @@ $navProfile.on("click",async ()=>{
       $submitForm,
       $allStoriesList,
       $filteredArticles,
-      $ownStories,
       $loginForm,
       $createAccountForm,
       $favDiv,
@@ -302,68 +316,76 @@ $navProfile.on("click",async ()=>{
 
 
  async function generateUserFavorites(){
-    const token = localStorage.getItem("token");
-    const username = localStorage.getItem("username");
-    currentUser = await User.getLoggedInUser(token, username) 
-    if (currentUser.favorites.length === 0){
-      $("<h5>")
-        .text("You have no favorited Articles!")
-        .appendTo($favList)
+   $favList.empty()
+    if (currentUser.favorites.length !== 0){
+     currentUser.favorites.map((story) => {
+       generateStoryHTML(story,$favList,"&#9733")
+      })
     }else{
-      currentUser.favorites.map(story => generateStoryHTML(story,$favList,"&#9733") 
-    )}
+       $("<h5>")
+        .text("You have no favorited Articles!")
+        .appendTo($favList) }
   }
+
+  //add favorites to user favorite list
+  $allStoriesList.on("click",".favorite",async(e)=>{
+    await User.addFavorite(e.target.parentElement.id);
+    console.log(e.target.parentElement.id)
+    $favList.empty()
+    await generateUserFavorites()
+
+  })
+  //remove favorites
+  $favDiv.on("click",".favorite",async(e)=>{
+    await User.removeFavorite(e.target.parentElement.id)
+
+    await generateUserFavorites()
+
+  })
 
 //populate the profile section
   async function generateUserSubmitted(){
-    const token = localStorage.getItem("token");
-    const username = localStorage.getItem("username");
-    currentUser = await User.getLoggedInUser(token, username) 
+
     if (currentUser.ownStories.length === 0){
       $("<h5>")
         .text("You have no stories that you've submitted")
         .appendTo($ownStories)
     }else{
-      currentUser.ownStories.map(story => {generateStoryHTML(story,$ownStories,"&#9998") 
-
-      $ownStories.on("click",".favorite",async(e)=>{
-        await User.editStory(e.target.parentElement.id);
-        console.log(e.target.parentElement.id)
-       
-      
-      })
+      currentUser.ownStories.map(story => {
+        generateStoryHTML(story,$ownStories,"&#9998")
       })
 
     }
   }
+//edit stories
 
+$ownStories.on("click",".favorite",(e)=>{
+        var storyId = (e.target.parentElement.id)
+        console.log(storyId)
+        $editForm.attr("class", "")
+        $("#edit-title").val(e.target.nextSibling.nextSibling.innerText)
+        $("#edit-author").val(e.target.nextSibling.nextSibling.nextSibling.nextSibling.innerText.slice(3))
+        $("#edit-url").val(e.target.nextSibling.nextSibling.href)
+$("#story-edit-button").on("click", async (e)=>{
+          e.preventDefault()
+          const newStoryObj = new Story({title: $("#edit-title").val(),author:$("#edit-author").val(),url:$("#edit-url").val(),storyId:storyId})
+          
+          await User.editStory(storyId,newStoryObj)
+          $ownStories.empty()
+          await generateUserSubmitted()
+          $editForm.addClass("hidden")
+          })
+$("#story-delete-button").on("click", async(e)=>{
+          e.preventDefault()
+          await User.deleteStory(storyId)
+          $ownStories.empty()
+          await generateUserSubmitted()
+          $editForm.addClass("hidden")
+          
+        })
+        
+  })
 
-  
-  $submitForm.on("submit", async function(evt) {
-    evt.preventDefault(); 
-    // no page-refresh on submit
-    const newStoryObj = {
-      author: $("#author").val(),
-      title:$("#title").val(),
-      url: $("#url").val()
-    }
-
-    $("#submit-form input").val("")
-    $submitForm.toggleClass("hidden")
-    const token = localStorage.token;
-    const username = localStorage.username;
-
-    currentUser = await User.getLoggedInUser(token,username);
-  
-
-    const newStory = new Story(newStoryObj)
-
-    await storyList.addStory(currentUser,newStory)
-    $allStoriesList.empty()
-
-    await generateStories(0)
-
-  });
   /* simple function to pull the hostname from a URL */
 
   function getHostName(url) {
@@ -388,4 +410,5 @@ $navProfile.on("click",async ()=>{
       
     }
   }
+
 });
