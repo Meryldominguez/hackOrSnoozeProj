@@ -6,6 +6,7 @@ $(async function() {
   const $loginForm = $("#login-form");
   const $createAccountForm = $("#create-account-form");
   const $ownStories = $("#my-articles");
+  const $editForm = $("#edit-article-form")
   const $navLogin = $("#nav-login");
   const $navLogOut = $("#nav-logout");
   const $newArticle = $("#nav-new-article")
