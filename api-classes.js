@@ -169,6 +169,14 @@ class User {
     const submission = await axios.patch(`${BASE_URL}/stories/${storyId}`,{"token": token, "story": {"author":storyObj.author, "title": storyObj.title, "url": storyObj.url}})
   
   }
+
+  static async deleteStory(storyId){
+    const username = localStorage.username;
+    const token = localStorage.token
+    const submission = await axios.delete(`${BASE_URL}/users/${username}/favorites/${storyId}`,{params:{
+      token: token}})
+  }
+
   static async addFavorite(storyId){
     const username = localStorage.username;
     const token = localStorage.token

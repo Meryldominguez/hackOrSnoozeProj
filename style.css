@@ -99,8 +99,9 @@ form input {
   border: none;
   border-radius: 2px;
   padding: 8px;
-  width: 300px;
+  width: 80%;
   box-shadow: 0 0 3px 1px lightgray;
+
 }
 
 form input:focus {
@@ -108,7 +109,7 @@ form input:focus {
   box-shadow: 0 0 4px 1px darkgray;
 }
 
-form > button {
+button {
   width: 4rem;
   margin: 5px 0px 15px 65px;
   border: none;
