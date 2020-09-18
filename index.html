@@ -35,9 +35,18 @@
     <h4>User Profile Info </h4>
     
     <section>
+      <button id="user-info-edit-button">Edit</button>
+      <form method="patch" id="profile-edit-form" class="hidden">
+        <label for="name">Name: </label><input id="edit-name">
+        <label for="name">Username: </label><input id="edit-username">
+        <button type="submit" id="profile-edit-submit">submit changes</button>
+      </form>
+      
+    <div id="profile-info">
       <div id="profile-name">Name:</div>
       <div id="profile-username">Username:</div>
       <div id="profile-account-date">Account Created:</div> 
+    </div>
       <section class="edit-article-container container">
     <form action="#" id="edit-article-form" class="hidden" method="post">
       <h4>Article Information</h4>
