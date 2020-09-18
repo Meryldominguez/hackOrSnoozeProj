@@ -191,7 +191,16 @@ class User {
       token: token}})
     console.log(submission.message)
     }
+  
+  static async changeUserInfo(userObj){
+    const username = localStorage.username;
+    const token = localStorage.token
+    const submission = await axios.patch(`${BASE_URL}/users/${username}`,{"token": token, "user": {"name":userObj.name, "username": userObj.username}})
+    console.log(submission.message)
+    syncCurrentUserToLocalStorage()
+    }
   }
+
 /**
  * Class to represent a single story.
  */

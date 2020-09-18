@@ -16,7 +16,7 @@ $(async function() {
   const $favList = $("#favorited-articles")
   const $navProfile = $("#nav-profile")
   const $profileDiv = $("#user-profile")
-  const $topArrow = $("#arrow-top")
+  const $profileEditBtn = $("#user-info-edit-button")
   // global storyList variable
   let storyList = null;
 
@@ -26,8 +26,8 @@ $(async function() {
   //global username and token variables
 
   await checkIfLoggedIn();
-console.log(currentUser)
-console.log(storyList)
+  console.log(currentUser)
+  console.log(storyList)
   /**
    * Event listener for logging in.
    *  If successfully we will setup the user instance
@@ -148,10 +148,11 @@ $navFav.on("click",async()=>{
 
 })
 //show.hide profile and user submitted articles
-$navProfile.on("click",()=>{
+$navProfile.on("click",async()=>{
   $favDiv.addClass("hidden")
   $profileDiv.toggleClass("hidden container")
   $submitForm.addClass("hidden")
+  await showCurrentUser()
 })
 
 
@@ -263,7 +264,7 @@ $navProfile.on("click",()=>{
 
     
 
-  //back to top arrow
+
   
   /**
    * A function to render HTML for an individual Story instance
@@ -393,9 +394,34 @@ $("#story-delete-button").on("click", async(e)=>{
     await generateUserSubmitted()
     $editForm.addClass("hidden")
     
-  })
-  
+  })  
 })
+
+$profileEditBtn.on("click",async()=>{
+  $("#profile-info").toggleClass("hidden");
+
+let name = $("#profile-name").text().slice(6)
+console.log(name)
+let username = $("#profile-username").text().slice(10)
+console.log(username)
+$("#profile-edit-form").attr("class", "")
+  $("#edit-name").val(name)
+  $("#edit-username").val(username)
+
+
+
+  $("profile-edit-submit").on("submit", async(e)=>{
+    e.preventDefault()
+    let userObj = new User({name:("#edit-name").val(),
+    username:$("#edit-username").val()})
+    await User.changeUserInfo(userObj)
+    $("#profile-edit-form").attr("class", "hidden")
+    $("#profile-info").attr("class", "")
+    
+  })
+
+})
+
   /* simple function to pull the hostname from a URL */
 
   function getHostName(url) {
