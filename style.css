@@ -5,7 +5,9 @@ html {
 body {
   margin: 8px 7.5vw;
 }
-
+li{
+  position: relative;
+}
 h1 {
   font-size: 1.1rem;
   margin: 0;
@@ -33,14 +35,22 @@ a:hover {
 
 .hidden {
   display: none;
+  transition: ease-in;
 }
 
+.favorite{
+  color: #ff6600;
+
+}
 
 
 nav {
   display: flex;
   background-color: #ff6600;
   align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
   padding: 5px 20px;
   border-radius: 3px 3px 0 0;
 }
@@ -133,6 +143,11 @@ form > hr {
   padding: 10px;
   width: 8rem;
 }
+#all-articles-list{
+  overflow: scroll;
+  height:90vh;
+
+}
 
 .articles-list {
   margin: 20px 5px;
@@ -192,6 +207,9 @@ form > hr {
 #my-articles {
   list-style: none;
   padding-left: 20px;
+  position: relative;
+  top: 0;
+
 }
 
 .account-forms-container {
@@ -210,7 +228,10 @@ form > hr {
 #user-profile > * {
   margin: 10px 0;
 }
+#user-favorites{
+  border: 1px black solid;
 
+}
 
 /** responsive queries for tightening things up for mobile. */
 

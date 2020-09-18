@@ -1,5 +1,6 @@
 const BASE_URL = "https://hack-or-snooze-v3.herokuapp.com";
-const curr = { username: JSON.stringify(localStorage.getItem("username")), token : JSON.stringify(localStorage.getItem("token"))} 
+
+
 
 /**
  * This class maintains the list of individual Story instances
@@ -24,9 +25,9 @@ class StoryList {
   // is **not** an instance method. Rather, it is a method that is called on the
   // class directly. Why doesn't it make sense for getStories to be an instance method?
 
-  static async getStories() {
+  static async getStories(skip) {
     // query the /stories endpoint (no auth required)
-    const response = await axios.get(`${BASE_URL}/stories`);
+    const response = await axios.get(`${BASE_URL}/stories?skip=${skip}`);
 
     // turn the plain old story objects from the API into instances of the Story class
     const stories = response.data.stories.map(story => new Story(story));
@@ -46,13 +47,19 @@ class StoryList {
 
   async addStory(user, newStory) {
     // TODO - Implement this functions!
-    const submission = await axios.post(`${BASE_URL}/stories`, newStory, {'token':user.loginToken})
+    const submission = await axios.post(`${BASE_URL}/stories`,{token :user.loginToken, story: newStory})
 
-    let storyObj = await axios.get(`${BASE_URL}/stories`,{'token':user.loginToken})
+    let storyObj = await axios.get(`${BASE_URL}/stories`,{token:user.loginToken})
     // this function should return the newly created story so it can be used in
     // the script.js file where it will be appended to the DOM
     return storyObj.data.stories[0]
   }
+static async getStory(storyId){
+    const response = await axios.get(`${BASE_URL}/stories/${storyId}`)
+    
+    
+    return response.data
+}
 }
 
 
@@ -106,6 +113,7 @@ class User {
    * - password: an existing user's password
    */
 
+
   static async login(username, password) {
     const response = await axios.post(`${BASE_URL}/login`, {
       user: {
@@ -155,8 +163,29 @@ class User {
     existingUser.ownStories = response.data.user.stories.map(s => new Story(s));
     return existingUser;
   }
-}
+  static async editStory(storyId, storyObj){
+    const username = localStorage.username;
+    const token = localStorage.token
+    const submission = await axios.patch(`${BASE_URL}/stories/${storyId}`,{token: token})
+    console.log(submission.data.message)
+  }
 
+
+  static async addFavorite(storyId){
+    const username = localStorage.username;
+    const token = localStorage.token
+    const submission = await axios.post(`${BASE_URL}/users/${username}/favorites/${storyId}`,{token: token})
+    console.log(submission.data.message)
+  }
+
+  static async removeFavorite(storyId){
+    const username = localStorage.username;
+    const token = localStorage.token
+    const submission = await axios.delete(`${BASE_URL}/users/${username}/favorites/${storyId}`,{params:{
+      token: token}})
+    console.log(submission.message)
+    }
+  }
 /**
  * Class to represent a single story.
  */
@@ -177,4 +206,6 @@ class Story {
     this.createdAt = storyObj.createdAt;
     this.updatedAt = storyObj.updatedAt;
   }
+
+  
 }

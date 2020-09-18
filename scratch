@@ -1,0 +1,26 @@
+async function generateUserSubmitted(){
+    const token = localStorage.getItem("token");
+    const username = localStorage.getItem("username");
+    currentUser = await User.getLoggedInUser(token, username) 
+    if (currentUser.ownStories.length === 0){
+      $("<h5>")
+        .text("You have no stories that you've submitted")
+        .appendTo($ownStories)
+    }else{
+      currentUser.ownStories.map(story => {generateStoryHTML(story,$ownStories,"&#9998") 
+
+      $ownStories.on("click",".favorite",async(e)=>{
+        await User.editStory(e.target.parentElement.id);
+        console.log(e.target.parentElement.id)
+       
+      
+      })
+      })
+
+    }
+  }
+  $profile.on("click",async ()=>{
+    $allStoriesList.toggleClass("hidden")
+    $favDiv.toggleClass("hidden")
+    await generateUserSubmitted()
+  })

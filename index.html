@@ -21,12 +21,46 @@
     <a class="hidden" id="nav-new-article" href="#">
       <small>(add article)</small>
     </a>
+    <a class="hidden" id="nav-favorites" href="#">
+      <small>(favorites)</small>
+    </a>
+    <a class="hidden" id="nav-profile" href="#">
+      <small>(profile)</small>
+    </a>
     <a class="hidden" id="nav-logout" href="#">
       <small>(logout)</small>
     </a>
   </nav>
+  <section id="user-profile" class="hidden">
+    <h4>User Profile Info </h4>
+    
+    <section>
+      <div id="profile-name">Name:</div>
+      <div id="profile-username">Username:</div>
+      <div id="profile-account-date">Account Created:</div> 
+      <section class="edit-article-container container">
+    <form action="#" id="edit-article-form" class="hidden" method="post">
+      <h4>Article Information</h4>
+      <div class="edit-input">
+        <label for="edit-title">Title</label>
+        <input id="edit-title" type="text">
+        <label for="edit-author">Author</label>
+        <input id="edit-author" type="text">
+        <label for="edit-url">Author</label>
+        <input id="edit-url" type="text">
+        <button type="submit">Change</button>
+      </div>
+    </form>
+  </section>
+      <article>
+      <ul id="my-articles" class="articles-list">
+      </ul>
+    </article>
+    </section>
+  </section>
   <section class="articles-container container">
     <form action="" class="hidden" id="submit-form">
+      <h3>Submit an article </h3>
       <div>
         <label for="author">author</label>
         <input id="author" required type="text" placeholder="author name">
@@ -37,40 +71,38 @@
       </div>
       <div>
         <label for="url">url</label>
-        <input id="url" required type="url" value="https://">
+        <input id="url" required type="url" placeholder ="article URL" value="https://">
       </div>
       <button type="submit">submit</button>
       <hr>
     </form>
     <article>
-      <ol id="all-articles-list" class="articles-list">
-        <h3>Loading...</h3>
-      </ol>
-    </article>
-    <article>
-      <ul id="favorited-articles" class="hidden articles-list">
+      <div id="user-favorites" class="hidden">
+      <h4>Favorites</h4>
+      <ul id="favorited-articles" class="articles-list"></ul>
+      </div>
+      
       </ul>
+    </div>
     </article>
+    
     <article>
       <ul id="filtered-articles" class="hidden articles-list">
       </ul>
     </article>
     <article>
-      <ul id="my-articles" class="hidden articles-list">
-      </ul>
+      <ol id="all-articles-list" class="articles-list">
+        <h3>Loading...</h3>
+      </ol>
     </article>
+    
   </section>
-  <section class="edit-article-container container">
-    <form action="#" id="edit-article-form" class="hidden" method="post">
-      <h4>Article Information</h4>
-      <div class="edit-input">
-        <label for="edit-title">Title</label>
-        <input id="edit-title" type="text">
-        <button type="submit">change</button>
-      </div>
-    </form>
+
+      
   </section>
-  <section class="account-forms-container container">
+ 
+  
+  <section class="account-forms-container container ">
     <form action="#" id="login-form" class="account-form hidden" method="post">
       <h4>Login</h4>
       <div class="login-input">
@@ -101,14 +133,7 @@
       <button type="submit">create account</button>
     </form>
   </section>
-  <section id="user-profile" class="container hidden">
-    <h4>User Profile Info</h4>
-    <section>
-      <div id="profile-name">Name:</div>
-      <div id="profile-username">Username:</div>
-      <div id="profile-account-date">Account Created:</div>
-    </section>
-  </section>
+  
 </body>
 <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
   crossorigin="anonymous"></script>
