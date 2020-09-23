@@ -196,15 +196,14 @@ class User {
     const username = localStorage.username;
     const token = localStorage.token
 
-    const submission = await axios.patch(`${BASE_URL}/users/${username}`,{params:{
+    const submission = await axios.patch(`${BASE_URL}/users/${username}`,{
       token: token, 
       user:{ 
         name: userObj.name
         //password : userObj.name
-      }}
+      }
     })
     console.log(submission.message)
-    syncCurrentUserToLocalStorage()
     }
   }
 

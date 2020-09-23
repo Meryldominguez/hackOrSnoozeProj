@@ -314,8 +314,6 @@ $navProfile.on("click",async()=>{
 
 
   }
- 
-
 
  async function generateUserFavorites(){
     const token = localStorage.getItem("token");
