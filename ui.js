@@ -27,7 +27,6 @@ $(async function() {
 
   await checkIfLoggedIn();
   console.log(currentUser)
-  console.log(storyList)
   /**
    * Event listener for logging in.
    *  If successfully we will setup the user instance
@@ -338,7 +337,6 @@ $navProfile.on("click",async()=>{
   //add favorites to user favorite list
   $allStoriesList.on("click",".favorite",async(e)=>{
     await User.addFavorite(e.target.parentElement.id);
-    console.log(e.target.parentElement.id)
     $favList.empty()
     await generateUserFavorites()
 
@@ -402,9 +400,7 @@ $profileEditBtn.on("click",async()=>{
   $("#profile-edit-form").toggleClass("hidden")
   $ownStories.toggleClass("hidden")
 let name = $("#profile-name").text().slice(6)
-console.log(name)
 let username = $("#profile-username").text().slice(10)
-console.log(username)
   $("#edit-name").val(name)
   $("#edit-username").val(username)
 })
@@ -412,7 +408,7 @@ console.log(username)
 $("#profile-edit-button").on("click", async(e)=>{
     e.preventDefault()
     let userObj = new User({name:$("#edit-name").val(),
-    username:$("#edit-username").val()})
+    token:localStorage.token})
     await User.changeUserInfo(userObj)
     $("#profile-edit-form").attr("class", "hidden")
     $("#profile-info").attr("class", "")

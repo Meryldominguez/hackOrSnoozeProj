@@ -181,7 +181,7 @@ class User {
     const username = localStorage.username;
     const token = localStorage.token
     const submission = await axios.post(`${BASE_URL}/users/${username}/favorites/${storyId}`,{token: token})
-    console.log(submission.data.message)
+    // console.log(submission.data.message)
   }
 
   static async removeFavorite(storyId){
@@ -189,18 +189,19 @@ class User {
     const token = localStorage.token
     const submission = await axios.delete(`${BASE_URL}/users/${username}/favorites/${storyId}`,{params:{
       token: token}})
-    console.log(submission.message)
+    // console.log(submission.message)
     }
   
   static async changeUserInfo(userObj){
     const username = localStorage.username;
     const token = localStorage.token
-  
-    const submission = await axios.patch(`${BASE_URL}/users/${username}`,{'params':{
-      'token': token, 
-      'user': { 
-        'name': userObj.name, "username": userObj.username
-      } }
+
+    const submission = await axios.patch(`${BASE_URL}/users/${username}`,{params:{
+      token: token, 
+      user:{ 
+        name: userObj.name
+        //password : userObj.name
+      }}
     })
     console.log(submission.message)
     syncCurrentUserToLocalStorage()
