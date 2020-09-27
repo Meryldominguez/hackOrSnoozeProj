@@ -16,7 +16,7 @@ $(async function() {
   const $favList = $("#favorited-articles")
   const $navProfile = $("#nav-profile")
   const $profileDiv = $("#user-profile")
-  const $profileEditBtn = $("#user-info-edit-button")
+  const $profileEditDivBtn = $("#user-info-edit-button")
   // global storyList variable
   let storyList = null;
 
@@ -89,6 +89,32 @@ $(async function() {
     $allStoriesList.toggle()
   });
 
+  //show/hide newArticle form
+  $newArticle.on("click",()=>{
+    $submitForm.toggleClass("hidden")
+    $favDiv.addClass("hidden")
+    $allStoriesList.attr("class","articles-list")
+    $profileDiv.attr("class","hidden")
+
+  })
+  //show/hide user favorites
+  $navFav.on("click",async()=>{
+    $favDiv.toggleClass("hidden")
+    $allStoriesList.removeClass("hidden")
+    $submitForm.addClass("hidden")
+    $profileDiv.attr("class","hidden")
+    
+
+  })
+  //show.hide profile and user submitted articles
+  $navProfile.on("click",async()=>{
+    $favDiv.addClass("hidden")
+    $profileDiv.toggleClass("hidden container")
+    $submitForm.addClass("hidden")
+    await showCurrentUser()
+  })
+
+
 
   /**
    * Event handler for Navigation to Homepage
@@ -103,15 +129,7 @@ $(async function() {
     $allStoriesList.show();}
   });
 
- //show/hide newArticle form
- $newArticle.on("click",()=>{
-  $submitForm.toggleClass("hidden")
-  $favDiv.addClass("hidden")
-  $allStoriesList.attr("class","articles-list")
-  $profileDiv.attr("class","hidden")
-  
-
-})
+ 
 //submit new article
   $submitForm.on("submit", async function(evt) {
     evt.preventDefault(); 
@@ -137,22 +155,6 @@ $(async function() {
     await generateStories(0)
 
   });
-//show/hide user favorites
-$navFav.on("click",async()=>{
-  $favDiv.toggleClass("hidden")
-  $allStoriesList.removeClass("hidden")
-  $submitForm.addClass("hidden")
-  $profileDiv.attr("class","hidden")
-  
-
-})
-//show.hide profile and user submitted articles
-$navProfile.on("click",async()=>{
-  $favDiv.addClass("hidden")
-  $profileDiv.toggleClass("hidden container")
-  $submitForm.addClass("hidden")
-  await showCurrentUser()
-})
 
 
 
@@ -171,12 +173,8 @@ $navProfile.on("click",async()=>{
     // if there is a token in localStorage, call User.getLoggedInUser
     //  to get an instance of User with the right details
     //  this is designed to run once, on page load
-    try {
-      currentUser = await User.getLoggedInUser(token, username)
-    } catch (error) {
-      alert(error)
-    }
-
+    currentUser = await User.getLoggedInUser(token, username)
+    
     if (currentUser) {
       showNavForLoggedInUser();
       $allStoriesList.empty()
@@ -244,12 +242,13 @@ $navProfile.on("click",async()=>{
     }
     
   }
-  
+  //infinite scroll
+
+
   async function populateScroll() {
         await generateStories(storyList.stories.length)
-
   }
-  //infinite scroll
+  
   $allStoriesList.on("scroll", ()=>{
     var scrollHeight = $(document).height();
     var scrollPos = $(window).height() + $(window).scrollTop();
@@ -262,7 +261,6 @@ $navProfile.on("click",async()=>{
 
 
     
-
 
   
   /**
@@ -315,7 +313,7 @@ $navProfile.on("click",async()=>{
 
   }
 
- async function generateUserFavorites(){
+  async function generateUserFavorites(){
     const token = localStorage.getItem("token");
     const username = localStorage.getItem("username");
 
@@ -368,50 +366,50 @@ $navProfile.on("click",async()=>{
 //edit stories
 //edit stories
 
-$ownStories.on("click",".favorite",(e)=>{
-  var storyId = (e.target.parentElement.id)
-  $editForm.attr("class", "")
-  $("#edit-title").val(e.target.nextSibling.nextSibling.innerText)
-  $("#edit-author").val(e.target.nextSibling.nextSibling.nextSibling.nextSibling.innerText.slice(3))
-  $("#edit-url").val(e.target.nextSibling.nextSibling.href)
-$("#story-edit-button").on("click", async (e)=>{
-    e.preventDefault()
-    const newStoryObj = new Story({title: $("#edit-title").val(),author:$("#edit-author").val(),url:$("#edit-url").val(),storyId:storyId})
-    
-    await User.editStory(storyId,newStoryObj)
-    $ownStories.empty()
-    await generateUserSubmitted()
-    $editForm.addClass("hidden")
-    })
-$("#story-delete-button").on("click", async(e)=>{
-    e.preventDefault()
-    await User.deleteStory(storyId)
-    $ownStories.empty()
-    await generateUserSubmitted()
-    $editForm.addClass("hidden")
-    
-  })  
-})
-
-$profileEditBtn.on("click",async()=>{
-  $("#profile-info").toggleClass("hidden");
-  $("#profile-edit-form").toggleClass("hidden")
-  $ownStories.toggleClass("hidden")
-let name = $("#profile-name").text().slice(6)
-let username = $("#profile-username").text().slice(10)
-  $("#edit-name").val(name)
-  $("#edit-username").val(username)
-})
-
-$("#profile-edit-button").on("click", async(e)=>{
-    e.preventDefault()
-    let userObj = new User({name:$("#edit-name").val(),
-    token:localStorage.token})
-    await User.changeUserInfo(userObj)
-    $("#profile-edit-form").attr("class", "hidden")
-    $("#profile-info").attr("class", "")
-    
+  $ownStories.on("click",".favorite",(e)=>{
+      var storyId = (e.target.parentElement.id)
+      $editForm.attr("class", "")
+      $("#edit-title").val(e.target.nextSibling.nextSibling.innerText)
+      $("#edit-author").val(e.target.nextSibling.nextSibling.nextSibling.nextSibling.innerText.slice(3))
+      $("#edit-url").val(e.target.nextSibling.nextSibling.href)
+    $("#story-edit-button").on("click", async (e)=>{
+      e.preventDefault()
+      const newStoryObj = new Story({title: $("#edit-title").val(),author:$("#edit-author").val(),url:$("#edit-url").val(),storyId:storyId})
+      
+      await User.editStory(storyId,newStoryObj)
+      $ownStories.empty()
+      await generateUserSubmitted()
+      $editForm.addClass("hidden")
+      })
+    $("#story-delete-button").on("click", async(e)=>{
+      e.preventDefault()
+      await User.deleteStory(storyId)
+      $ownStories.empty()
+      await generateUserSubmitted()
+      $editForm.addClass("hidden")
+      
+    })  
   })
+
+  $profileEditDivBtn.on("click",async()=>{
+    $("#profile-info").toggleClass("hidden");
+    $("#profile-edit-form").toggleClass("hidden")
+    $ownStories.toggleClass("hidden")
+  let name = $("#profile-name").text().slice(6)
+  let username = $("#profile-username").text().slice(10)
+    $("#edit-name").val(name)
+    $("#edit-username").val(username)
+  })
+
+  $("#profile-edit-button").on("click", async(e)=>{
+      e.preventDefault()
+      let userObj = new User({name:$("#edit-name").val(),
+      token:localStorage.token})
+      await User.changeUserInfo(userObj)
+      $("#profile-edit-form").attr("class", "hidden")
+      $("#profile-info").attr("class", "")
+      await showCurrentUser()
+    })
   /* simple function to pull the hostname from a URL */
 
   function getHostName(url) {
