@@ -203,7 +203,7 @@ class User {
         //password : userObj.name
       }
     })
-    console.log(submission.message)
+    //console.log(submission.message)
     }
   }
 

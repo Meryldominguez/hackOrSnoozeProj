@@ -26,7 +26,7 @@ $(async function() {
   //global username and token variables
 
   await checkIfLoggedIn();
-  console.log(currentUser)
+  
   /**
    * Event listener for logging in.
    *  If successfully we will setup the user instance
@@ -194,7 +194,6 @@ $(async function() {
   }
   
   async function showCurrentUser(){
-    
     $("#profile-name").text(`Name: ${currentUser.name}`)
     $("#profile-username").text(`Username: ${currentUser.username}`)
     $("#profile-account-date").text(`Account Created: ${currentUser.createdAt}`)
@@ -403,12 +402,15 @@ $(async function() {
 
   $("#profile-edit-button").on("click", async(e)=>{
       e.preventDefault()
+      token = localStorage.token
+      username = localStorage.username
       let userObj = new User({name:$("#edit-name").val(),
       token:localStorage.token})
       await User.changeUserInfo(userObj)
+      currentUser = await User.getLoggedInUser(token, username)
+      await showCurrentUser()
       $("#profile-edit-form").attr("class", "hidden")
       $("#profile-info").attr("class", "")
-      await showCurrentUser()
     })
   /* simple function to pull the hostname from a URL */
 
@@ -431,7 +433,6 @@ $(async function() {
     if (currentUser) {
       localStorage.setItem("token", currentUser.loginToken);
       localStorage.setItem("username", currentUser.username);
-      
     }
   }
 
